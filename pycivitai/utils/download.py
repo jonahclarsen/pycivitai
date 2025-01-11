@@ -73,6 +73,10 @@ def download_file(url, filename, expected_size: int = None, desc=None, session=N
                 pbar.update(len(chunk))
 
     actual_size = os.path.getsize(filename)
+    
+    if response.reason == "Unauthorized":
+        raise requests.exceptions.HTTPError(f"Unauthorized request. Probably because there's no valid API token.")
+
     if expected_size is not None and actual_size != expected_size:
         os.remove(filename)
         raise requests.exceptions.HTTPError(f"Downloaded file is not of expected size, "
