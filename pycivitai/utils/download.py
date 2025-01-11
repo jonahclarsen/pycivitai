@@ -51,6 +51,12 @@ def download_file(url, filename, expected_size: int = None, desc=None, session=N
     :rtype: str
     """
     session = session or requests.session()
+    
+    if "CIVITAI_API_TOKEN" in os.environ:
+        url = url + ("&" if "?" in url else "?") + "token=" + os.environ['CIVITAI_API_TOKEN']
+    else:
+        print("No token found.")
+
     response = session.get(url, stream=True, allow_redirects=True, **kwargs)
     expected_size = expected_size or response.headers.get('Content-Length', None)
     expected_size = int(expected_size) if expected_size is not None else expected_size
